@@ -12,40 +12,40 @@
 void imprimirInstrucoesEntrada() {
     std::cout << "Bem-Vindo a Nossa Locadora" << std::endl;
     std::cout << std::endl;
-    std::cout << "Instrucoes de Entrada:" << std::endl;
+    std::cout << "Instrucoes de Entrada:" << std::endl << std::endl;
     
     std::cout << "1. Ler Arquivo de Cadastro:" << std::endl;
-    std::cout << "   LA <Nome do Arquivo>" << std::endl;
+    std::cout << "   LA <Nome do Arquivo>" << std::endl << std::endl;
 
     std::cout << "2. Cadastrar Filme:" << std::endl;
-    std::cout << "   CF <Tipo: F|D> <quantidade> <codigo> <titulo> <categoria no caso de DVD>" << std::endl;
+    std::cout << "   CF <Tipo: F|D> <quantidade> <codigo> <titulo> <categoria no caso de DVD>" << std::endl << std::endl;
 
     std::cout << "3. Remover Filme:" << std::endl;
-    std::cout << "   RF <codigo>" << std::endl;
+    std::cout << "   RF <codigo>" << std::endl << std::endl;
 
     std::cout << "4. Listar Filmes ordenados por Codigo ou Titulo:" << std::endl;
-    std::cout << "   LF [C|T]" << std::endl;
+    std::cout << "   LF [C|T]" << std::endl << std::endl;
 
     std::cout << "5. Cadastrar Cliente:" << std::endl;
-    std::cout << "   CC <CPF> <Nome>" << std::endl;
+    std::cout << "   CC <CPF> <Nome>" << std::endl << std::endl;
 
     std::cout << "6. Remover Cliente:" << std::endl;
-    std::cout << "   RC <CPF>" << std::endl;
+    std::cout << "   RC <CPF>" << std::endl << std::endl;
 
     std::cout << "7. Listar Clientes ordenados por Codigo ou Nome:" << std::endl;
-    std::cout << "   LC [C|N]" << std::endl;
+    std::cout << "   LC [C|N]" << std::endl << std::endl;
 
     std::cout << "8. Aluguel Filme:" << std::endl;
-    std::cout << "   AL <CPF> <Codigo1> ... <Codigo N>" << std::endl;
+    std::cout << "   AL <CPF> <Codigo1> ... <Codigo N>" << std::endl << std::endl;
 
     std::cout << "9. Devolucao Filme:" << std::endl;
-    std::cout << "   DV <CPF> <Dias Locacao>" << std::endl;
+    std::cout << "   DV <CPF> <Dias Locacao>" << std::endl << std::endl;
 
     std::cout << "10. Aumentar Estoque:" << std::endl;
-    std::cout << "   AE <Quantidade> <Codigo>" << std::endl;
+    std::cout << "    AE <Quantidade> <Codigo>" << std::endl << std::endl;
 
     std::cout << "11. Diminuir Estoque:" << std::endl;
-    std::cout << "   RE <Quantidade> <Codigo>" << std::endl;
+    std::cout << "    RE <Quantidade> <Codigo>" << std::endl << std::endl;
 
     std::cout << "12. Finalizar Sistema:" << std::endl;
     std::cout << "    FS" << std::endl;
@@ -62,12 +62,12 @@ bool erroCQ(std::string qtd, std::string codigo) {
     }
 
     if (ver_num == 0) {
-        std::cout << "A quantidade deve ser um numero inteiro" << std::endl;
+        std::cout << "ERRO: A quantidade deve ser um numero inteiro" << std::endl;
             return 0;
     }
     else {
         if (stoi(qtd) <= 0) {
-            std::cout << "A quantidade deve ser maior que 0" << std::endl;
+            std::cout << "ERRO: A quantidade deve ser maior que 0" << std::endl;
                 return 0;
         }
     }
@@ -81,12 +81,12 @@ bool erroCQ(std::string qtd, std::string codigo) {
     }
 
     if (ver_num == 0) {
-        std::cout << "Codigo deve ser um numero inteiro" << std::endl;
+        std::cout << "ERRO: Codigo deve ser um numero inteiro" << std::endl;
             return 0;
     }
     else {
         if (stoi(codigo) <= 0) {
-            std::cout << "Codigo deve ser maior que 0" << std::endl;
+            std::cout << "ERRO: Codigo deve ser maior que 0" << std::endl;
             return 0;
         }
     }
@@ -97,11 +97,33 @@ bool erroCC(std::string cpf) {
 
     for (int i = 0; i < (int)cpf.size(); i++) {
         if (!isdigit(cpf[i]) || (int)cpf[i] < 0) {
-            std::cout << "CPF deve possuir apenas numeros entre 0 e 9" << std::endl;
+            std::cout << "ERRO: CPF deve possuir apenas numeros entre 0 e 9" << std::endl;
             return 0;
         }
     }
 
+    return 1;
+}
+
+bool erroRF(std::string codigo){
+
+    for (int i = 0; i < (int)codigo.size(); i++) {
+        if (!isdigit(codigo[i]) || (int)codigo[i] < 0) {
+            std::cout << "ERRO: Codigo deve ser um numero inteiro positivo" << std::endl;
+            return 0;
+        }
+    }
+    return 1;
+}
+
+bool erroData(std::string dias){
+
+    for (int i = 0; i < (int)dias.size(); i++) {
+        if (!isdigit(dias[i]) || (int)dias[i] < 0) {
+            std::cout << "ERRO: Dias deve ser um numero inteiro positivo" << std::endl;
+            return 0;
+        }
+    }
     return 1;
 }
 
@@ -112,7 +134,7 @@ int main() {
     imprimirInstrucoesEntrada();
 
     while (true) {
-        std::cout << "Digite um comando (ou 'FS' para finalizar): ";
+        std::cout << std::endl << "Digite um comando (ou 'FS' para finalizar): ";
         std::getline(std::cin, comando);
 
         std::istringstream iss(comando);
@@ -134,30 +156,42 @@ int main() {
             iss >> qtd_string >> codigo_string;
             iss >> titulo;
 
-                if (tipo == 'D') {
-                    iss >> categoria;
-                    if(erroCQ(qtd_string, codigo_string)){
-                        quantidade = stoi(qtd_string);
-                        codigo = stoi(codigo_string);
-                        locadora.cadastrarDVD(codigo, quantidade, titulo, categoria);
+                if(!qtd_string.empty() && !codigo_string.empty() && !titulo.empty()){
+                    if (tipo == 'D') {
+                        iss >> categoria;
+                        if(erroCQ(qtd_string, codigo_string)){
+                            quantidade = stoi(qtd_string);
+                            codigo = stoi(codigo_string);
+                            locadora.cadastrarDVD(codigo, quantidade, titulo, categoria);
+                        }
                     }
-                }
-                else if (tipo == 'F') {
-                    if (erroCQ(qtd_string, codigo_string)) {
-                        quantidade = stoi(qtd_string);
-                        codigo = stoi(codigo_string);
-                        locadora.cadastrarFita(codigo, quantidade, titulo);
+                    else if (tipo == 'F') {
+                        if (erroCQ(qtd_string, codigo_string)) {
+                            quantidade = stoi(qtd_string);
+                            codigo = stoi(codigo_string);
+                            locadora.cadastrarFita(codigo, quantidade, titulo);
+                        }
                     }
-                }
-                else {
-                    std::cerr << "ERRO: Tipo de filme invalido." << std::endl;
+                    else {
+                        std::cerr << "ERRO: Tipo de filme invalido." << std::endl;
+                    }
+                } else{
+                    std::cerr << "ERRO: Campos vazios" << std::endl;
                 }
 
         } else if (operacao == "RF") {
+            std::string codigo_string;
             int codigo;
-            iss >> codigo;
+            iss >> codigo_string;
             // Lógica para Remover Filme
-            locadora.removerProduto(codigo);
+            if(!codigo_string.empty()){
+                if(erroRF(codigo_string)){
+                codigo = stoi(codigo_string);
+                locadora.removerProduto(codigo);
+                }
+            } else {
+                std::cout<< "ERRO: Campos vazios" <<std::endl;
+            }
 
         } else if (operacao == "LF") {
             char opcao;
@@ -211,13 +245,14 @@ int main() {
             locadora.alugarFilme(cpf, codigosProdutos);
 
         } else if (operacao == "DV") {
-            std::string cpf;
+            std::string cpf, dias_string;
             int dias;
             iss >> cpf;
-            iss >> dias;
-
-            locadora.devolverFilme(cpf, dias);
-
+            iss >> dias_string;
+            if(erroData(dias_string)){
+                dias = stoi(dias_string);
+                locadora.devolverFilme(cpf, dias);
+            }
         }
         else if (operacao == "AE") {
 
